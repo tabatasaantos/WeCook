@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Storage;
 using WeCook.Domain;
 using WeCook.Domain.Interfaces;
-using WeCook.Domain.Models.Validation;
 using WeCook.WebApi.ViewModels;
 
 namespace WeCook.WebApi.Controllers
@@ -55,34 +53,35 @@ namespace WeCook.WebApi.Controllers
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<CategoriaViewModel>> Alterar(Guid id, CategoriaViewModel categoriaViewModel)
         {
-            if (id != categoriaViewModel.Id) return BadRequest();
-            if (!ModelState.IsValid) return BadRequest();
+            if (id != categoriaViewModel.Id)
+            {
+                NotificarErro("O id informado não é o mesmo que foi passado na query");
+                return Ok(categoriaViewModel);
+            }
 
-            var categoria = _mapper.Map<Categoria>(categoriaViewModel);
-            var result = await _categoriaService.Atualizar(categoria);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            return Ok(categoria);
+            await _categoriaService.Atualizar(_mapper.Map<Categoria>(categoriaViewModel));
+
+            return Ok(categoriaViewModel);
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult<CategoriaViewModel>> Excluir(Guid id)
         {
-            var categoria = await ObterCategoria(id);
+           var categoriaViewModel = await ObterReceitaCategoria(id);
 
-            if (categoria == null) return NotFound();
+            if (categoriaViewModel == null) return NotFound();
 
-            var result = await _categoriaService.Remover(id);
+            await _categoriaService.Remover(id);
 
-            if (!result) return BadRequest();
-
-            return Ok(categoria);
+            return Ok(categoriaViewModel);
         }
 
-        private async Task<CategoriaViewModel> ObterCategoria(Guid id)
+        private async Task<CategoriaViewModel> ObterReceitaCategoria(Guid id)
         {
-            return _mapper.Map<CategoriaViewModel>(await _categoriaRepository.ObterPorId(id));
+            return _mapper.Map<CategoriaViewModel>(await _categoriaRepository.ObterReceitaCategoria(id));
         }
-
 
         //[HttpGet]
         //[Route("{id:guid}")]
