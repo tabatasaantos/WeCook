@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Text;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using WeCook.Data;
+using WeCook.WebApi.Configuration;
 
 namespace WeCook.WebApi
 {
@@ -36,8 +38,10 @@ namespace WeCook.WebApi
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddAutoMapper(typeof(Startup));
             services.AddResponseCaching();
             services.AddControllers();
+            services.ResolveDependencies();
 
             var key = Encoding.ASCII.GetBytes(Settings.Secret);
             services.AddAuthentication(x =>
@@ -67,9 +71,7 @@ namespace WeCook.WebApi
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
