@@ -14,11 +14,9 @@ namespace WeCook.Data.Repository
 
         public async Task<Categoria> ObterReceitaCategoria(Guid id)
         {
-            return await Db.Categorias.AsNoTracking()
+            return await Db.Categoria.AsNoTracking()
                 .Include(c => c.Receitas)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
-
-
     }
 }

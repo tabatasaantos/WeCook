@@ -8,16 +8,16 @@ namespace WeCook.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Categorias",
+                name: "Categoria",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     IncluidoEm = table.Column<DateTime>(nullable: false),
-                    Nome = table.Column<string>(nullable: true)
+                    Nome = table.Column<string>(type: "varchar(100)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categorias", x => x.Id);
+                    table.PrimaryKey("PK_Categoria", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -26,8 +26,8 @@ namespace WeCook.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(maxLength: 20, nullable: false),
-                    Password = table.Column<string>(maxLength: 20, nullable: false)
+                    Username = table.Column<string>(type: "varchar(100)", maxLength: 20, nullable: false),
+                    Password = table.Column<string>(type: "varchar(100)", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,46 +35,45 @@ namespace WeCook.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Receitas",
+                name: "Receita",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
                     IncluidoEm = table.Column<DateTime>(nullable: false),
-                    Nome = table.Column<string>(nullable: true),
-                    Ingredientes = table.Column<string>(nullable: true),
-                    ModoPreparo = table.Column<string>(nullable: true),
-                    TempoPreparo = table.Column<decimal>(nullable: false),
+                    Nome = table.Column<string>(type: "varchar(100)", nullable: true),
+                    Ingredientes = table.Column<string>(type: "varchar(100)", nullable: true),
+                    ModoPreparo = table.Column<string>(type: "varchar(100)", nullable: true),
+                    TempoPreparoEmMin = table.Column<int>(nullable: false),
                     Rendimento = table.Column<int>(nullable: false),
-                    CategoriaId = table.Column<int>(nullable: false),
-                    CategoriaId1 = table.Column<Guid>(nullable: true)
+                    CategoriaId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Receitas", x => x.Id);
+                    table.PrimaryKey("PK_Receita", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Receitas_Categorias_CategoriaId1",
-                        column: x => x.CategoriaId1,
-                        principalTable: "Categorias",
+                        name: "FK_Receita_Categoria_CategoriaId",
+                        column: x => x.CategoriaId,
+                        principalTable: "Categoria",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Receitas_CategoriaId1",
-                table: "Receitas",
-                column: "CategoriaId1");
+                name: "IX_Receita_CategoriaId",
+                table: "Receita",
+                column: "CategoriaId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Receitas");
+                name: "Receita");
 
             migrationBuilder.DropTable(
                 name: "Users");
 
             migrationBuilder.DropTable(
-                name: "Categorias");
+                name: "Categoria");
         }
     }
 }

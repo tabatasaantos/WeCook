@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
 using WeCook.Domain.Base;
 
 namespace WeCook.Domain
@@ -14,11 +12,9 @@ namespace WeCook.Domain
       
         public string ModoPreparo { get; set; }
        
-        public decimal TempoPreparo { get; set; }
-        
-        public int Rendimento { get; set; }
-    
-        public int CategoriaId { get; set; }
+        public int TempoPreparoEmMin { get; set; }
+         
+        public Guid CategoriaId { get; set; }
         public Categoria Categoria { get; set; }
     }
 }

@@ -27,17 +27,17 @@ namespace WeCook.WebApi.Controllers
         [HttpGet]
         public async Task<IEnumerable<CategoriaViewModel>> ObterTodos()
         {
-            var categoria = _mapper.Map<IEnumerable<CategoriaViewModel>>(await _categoriaRepository.ObterTodos());
-
-            return categoria;
+            return _mapper.Map<IEnumerable<CategoriaViewModel>>(await _categoriaRepository.ObterTodos());
         }
 
         [HttpGet ("{id:guid}")]
         public async Task<ActionResult<CategoriaViewModel>> ObterPorId(Guid id)
         {
-            var categoria = _mapper.Map<IEnumerable<CategoriaViewModel>>(await _categoriaRepository.ObterPorId(id));
-            if(categoria == null) return NotFound();
-            return Ok(categoria);
+            var categoria = await ObterReceitaCategoria(id);
+
+            if (categoria == null) return NotFound();
+
+            return categoria;
         }
 
         [HttpPost]
@@ -45,9 +45,11 @@ namespace WeCook.WebApi.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            await _categoriaService.Adicionar(_mapper.Map<Categoria>(categoriaViewModel));
+            Categoria teste = _mapper.Map<Categoria>(categoriaViewModel);
 
-            return Ok(categoriaViewModel);
+            await _categoriaService.Adicionar(teste);
+
+            return Ok("Cadastrado com sucesso!");
         }
 
         [HttpPut("{id:guid}")]
@@ -63,7 +65,7 @@ namespace WeCook.WebApi.Controllers
 
             await _categoriaService.Atualizar(_mapper.Map<Categoria>(categoriaViewModel));
 
-            return Ok(categoriaViewModel);
+            return Ok("Alterado com sucesso!");
         }
 
         [HttpDelete("{id:guid}")]
@@ -75,94 +77,12 @@ namespace WeCook.WebApi.Controllers
 
             await _categoriaService.Remover(id);
 
-            return Ok(categoriaViewModel);
+            return Ok("Deletado com sucesso!");
         }
 
         private async Task<CategoriaViewModel> ObterReceitaCategoria(Guid id)
         {
             return _mapper.Map<CategoriaViewModel>(await _categoriaRepository.ObterReceitaCategoria(id));
         }
-
-        //[HttpGet]
-        //[Route("{id:guid}")]
-        //public async Task<ActionResult<Categoria>> GetCategoriaId(Guid id)
-        //{
-        //    var categoria = await _context.Categorias.FirstOrDefaultAsync(x => x.Id == id);
-
-        //    return Ok(categoria);
-        //}
-
-        //[HttpPost]
-        //public async Task<ActionResult<List<Categoria>>> PostCategoria([FromBody] Categoria model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    try
-        //    {
-        //        _context.Categorias.Add(model);
-        //        await _context.SaveChangesAsync();
-
-        //        return CreatedAtAction("GetCategoriaId", new { id = model.Id }, model);
-        //    }
-        //    catch
-        //    {
-        //        return BadRequest(new { message = "Não foi possível criar uma nova categoria!" });
-        //    }
-        //}
-
-        //[HttpPut]
-        //[Route("{id:guid}")]
-        //public async Task<ActionResult<Categoria>> PutCategoria(Guid id, [FromBody] Categoria model)
-        //{
-        //    if (model.Id != id)
-        //    {
-        //        return NotFound(new { message = "Categoria não encontrada!" });
-        //    }
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    try
-        //    {
-        //        _context.Entry<Categoria>(model).State = EntityState.Modified;
-        //        await _context.SaveChangesAsync();
-        //        return Ok(model);
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        return BadRequest(new { message = "Este registro já foi atualizado!" });
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return BadRequest(new { message = "Não foi possível atualizar categoria!" });
-        //    }
-        //}
-
-        //[HttpDelete]
-        //[Route("{id:guid}")]
-        //public async Task<ActionResult<List<Categoria>>> DeleteCategoria(Guid id)
-        //{
-        //    var categoria = await _context.Categorias.FirstOrDefaultAsync(x => x.Id == id);
-        //    if (categoria == null)
-        //    {
-        //        return NotFound(new { massage = "Categoria não encontrada!" });
-        //    }
-
-        //    try
-        //    {
-        //        _context.Categorias.Remove(categoria);
-        //        await _context.SaveChangesAsync();
-        //        return Ok(new { message = "Categoria removida com sucesso!" });
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return BadRequest(new { massage = "Não foi possível excluir categoria!" });
-        //    }
-        //}
-
     }
 }

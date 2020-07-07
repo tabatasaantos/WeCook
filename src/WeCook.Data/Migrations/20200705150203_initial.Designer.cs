@@ -10,7 +10,7 @@ using WeCook.Data;
 namespace WeCook.Data.Migrations
 {
     [DbContext(typeof(WeCookContext))]
-    [Migration("20200630234845_initial")]
+    [Migration("20200705150203_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,11 +31,11 @@ namespace WeCook.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Nome")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categorias");
+                    b.ToTable("Categoria");
                 });
 
             modelBuilder.Entity("WeCook.Domain.Receita", b =>
@@ -44,35 +44,32 @@ namespace WeCook.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("CategoriaId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("CategoriaId1")
+                    b.Property<Guid>("CategoriaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("IncluidoEm")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Ingredientes")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("ModoPreparo")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("Nome")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int>("Rendimento")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("TempoPreparo")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("TempoPreparoEmMin")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoriaId1");
+                    b.HasIndex("CategoriaId");
 
-                    b.ToTable("Receitas");
+                    b.ToTable("Receita");
                 });
 
             modelBuilder.Entity("WeCook.Domain.User", b =>
@@ -84,12 +81,12 @@ namespace WeCook.Data.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("varchar(100)")
                         .HasMaxLength(20);
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
+                        .HasColumnType("varchar(100)")
                         .HasMaxLength(20);
 
                     b.HasKey("Id");
@@ -101,7 +98,8 @@ namespace WeCook.Data.Migrations
                 {
                     b.HasOne("WeCook.Domain.Categoria", "Categoria")
                         .WithMany("Receitas")
-                        .HasForeignKey("CategoriaId1");
+                        .HasForeignKey("CategoriaId")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -11,19 +11,20 @@ namespace WeCook.Data.Repository
         public ReceitaRepository(WeCookContext context) : base(context)
         {
         }
+
         public async Task<Receita> ObterReceita(Guid id)
         {
-            return await Db.Receitas.AsNoTracking()
-                .Include(r => r.Nome)
-                .FirstOrDefaultAsync(r => r.Id == id);
-        }
-
-        public async Task<Receita> ObterReceitaPorCategoria(Guid id)
-        {
-            return await Db.Receitas.AsNoTracking()
-                .Include(r => r.Nome)
+            return await Db.Receita.AsNoTracking()
                 .Include(r => r.Categoria)
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
+
+        //public async Task<Receita> ObterReceitaPorCategoria(Guid id)
+        //{
+        //    return await Db.Receita.AsNoTracking()
+        //        .Include(r => r.Nome)
+        //        .Include(r => r.Categoria)
+        //        .FirstOrDefaultAsync(r => r.Id == id);
+        //}
     }
 }

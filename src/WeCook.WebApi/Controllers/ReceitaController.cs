@@ -1,110 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WeCook.Data;
 using WeCook.Domain;
+using WeCook.Domain.Interfaces;
+using WeCook.WebApi.ViewModels;
 
 namespace WeCook.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/receita")]
     [ApiController]
     public class ReceitaController : ControllerBase
     {
-        private readonly WeCookContext _context;
+        private readonly IReceitaRepository _receitaRepository;
+        private readonly IReceitaService _receitaService;
+        private readonly IMapper _mapper;
 
-        public ReceitaController(WeCookContext context)
+        public ReceitaController(IReceitaRepository receitaRepository, IReceitaService receitaService, IMapper mapper)
         {
-            _context = context;
+            _receitaRepository = receitaRepository;
+            _receitaService = receitaService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Receita>>> Get()
+        public async Task<IEnumerable<ReceitaViewModel>> ObterTodos()
         {
-            var receita = await _context.Categorias.AsNoTracking().ToListAsync();
+            var receita = _mapper.Map<IEnumerable<ReceitaViewModel>>(await _receitaRepository.ObterTodos());
 
-            return Ok(value: receita);
+            return receita;
         }
 
-        [HttpGet]
-        [Route("{id:int})")]
-        public async Task<ActionResult<Receita>> GetReceitaId(Guid id)
+        [HttpGet("{id:guid})")]
+        public async Task<ActionResult<ReceitaViewModel>> ObterPorId(Guid id)
         {
-            var receita = await _context.Categorias.FirstOrDefaultAsync(x => x.Id == id);
+            var receita = await ObterReceita(id);
 
-            return Ok(receita);
+            if (receita == null) return NotFound();
+
+            return receita;
         }
 
         [HttpPost]
-        public async Task<ActionResult<List<Receita>>> PostReceita([FromBody] Receita model)
+        public async Task<ActionResult<Receita>> Adicionar(ReceitaViewModel receitaViewModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            try
-            {
-                _context.Receitas.Add(model);
-                await _context.SaveChangesAsync();
+            if (!ModelState.IsValid) return BadRequest();
 
-                return CreatedAtAction("GetReceitaId", new { id = model.Id }, model);
-            }
-            catch
-            {
-                return BadRequest(new { message = "Não foi possível criar uma nova receita!" });
-            }
+            await _receitaService.Adicionar(_mapper.Map<Receita>(receitaViewModel));
+
+            return Ok("Adicionado com sucesso!");
         }
 
         [HttpPut]
-        [Route("{id:int})")]
-        public async Task<ActionResult<Categoria>> PutReceita(Guid id, [FromBody] Receita model)
+        [Route("{id:guid})")]
+        public async Task<ActionResult<Receita>> Alterar(Guid id, ReceitaViewModel receitaViewModel)
         {
-            if (model.Id != id)
+            if (id != receitaViewModel.Id)
             {
-                return NotFound(new { message = "Receita não encontrada!" });
-            }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
+                return Ok(receitaViewModel);
             }
 
-            try
-            {
-                _context.Entry<Receita>(model).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-                return Ok(model);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return BadRequest(new { message = "Este registro já foi atualizado!" });
-            }
-            catch (Exception)
-            {
-                return BadRequest(new { message = "Não foi possível atualizar receita!" });
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            await _receitaService.Atualizar(_mapper.Map<Receita>(receitaViewModel));
+
+            return Ok("Alterado com sucesso!");
         }
 
         [HttpDelete]
-        [Route("{id:int})")]
-        public async Task<ActionResult<List<Receita>>> DeleteReceita(Guid id)
+        [Route("{id:guid})")]
+        public async Task<ActionResult<ReceitaViewModel>> Excluir(Guid id)
         {
-            var receita = await _context.Receitas.FirstOrDefaultAsync(x => x.Id == id);
-            if (receita == null)
-            {
-                return NotFound(new { massage = "Receita não encontrada!" });
-            }
+            var receitaViewModel = await ObterReceita(id);
 
-            try
-            {
-                _context.Receitas.Remove(receita);
-                await _context.SaveChangesAsync();
-                return Ok(new { message = "Receita removida com sucesso!" });
-            }
-            catch (Exception)
-            {
-                return BadRequest(new { massage = "Não foi possível excluir a receita!" });
-            }
+            if (receitaViewModel == null) return NotFound();
+
+            await _receitaService.Remover(id);
+
+            return Ok("Deletado com sucesso!");
+        }
+
+        private async Task<ReceitaViewModel> ObterReceita(Guid id)
+        {
+            return _mapper.Map<ReceitaViewModel>(await _receitaRepository.ObterReceita(id));
         }
     }
 }

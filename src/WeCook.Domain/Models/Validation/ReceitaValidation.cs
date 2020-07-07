@@ -14,11 +14,11 @@ namespace WeCook.Domain.Models.Validation
            .WithMessage("O campo {PropertyName} precisa ter entre {MinLength} e {MaxLength} caracteres");
 
             RuleFor(r => r.Ingredientes)
-           .NotEmpty().WithMessage("O campo {PropertyName} precisa ser fornecido").Length(3, 600)
+           .NotEmpty().WithMessage("O campo {PropertyName} precisa ser fornecido").Length(2, 600)
            .WithMessage("O campo {PropertyName} precisa ter entre {MinLength} e {MaxLength} caracteres");
 
             RuleFor(r => r.ModoPreparo)
-           .NotEmpty().WithMessage("O campo {PropertyName} precisa ser fornecido").Length(3, 600)
+           .NotEmpty().WithMessage("O campo {PropertyName} precisa ser fornecido").Length(2, 600)
            .WithMessage("O campo {PropertyName} precisa ter entre {MinLength} e {MaxLength} caracteres");
         }
     }
