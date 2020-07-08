@@ -17,7 +17,7 @@ namespace WeCook.WebApi.Controllers
         private readonly ICategoriaService _categoriaService;
         private readonly IMapper _mapper;
 
-        public CategoriaController(ICategoriaRepository categoriaRepository, IMapper mapper, ICategoriaService categoriaService)
+        public CategoriaController(ICategoriaRepository categoriaRepository, IMapper mapper, ICategoriaService categoriaService, INotificador notificador) : base(notificador)
         {
             _categoriaRepository = categoriaRepository;
             _mapper = mapper;
@@ -43,13 +43,13 @@ namespace WeCook.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CategoriaViewModel>> Adicionar(CategoriaViewModel categoriaViewModel)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             Categoria teste = _mapper.Map<Categoria>(categoriaViewModel);
 
             await _categoriaService.Adicionar(teste);
 
-            return Ok("Cadastrado com sucesso!");
+            return CustomResponse("Cadastrado com sucesso!");
         }
 
         [HttpPut("{id:guid}")]
@@ -61,11 +61,11 @@ namespace WeCook.WebApi.Controllers
                 return Ok(categoriaViewModel);
             }
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             await _categoriaService.Atualizar(_mapper.Map<Categoria>(categoriaViewModel));
 
-            return Ok("Alterado com sucesso!");
+            return CustomResponse("Alterado com sucesso!");
         }
 
         [HttpDelete("{id:guid}")]
@@ -77,7 +77,7 @@ namespace WeCook.WebApi.Controllers
 
             await _categoriaService.Remover(id);
 
-            return Ok("Deletado com sucesso!");
+            return CustomResponse("Deletado com sucesso!");
         }
 
         private async Task<CategoriaViewModel> ObterReceitaCategoria(Guid id)

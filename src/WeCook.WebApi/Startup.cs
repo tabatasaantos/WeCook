@@ -27,7 +27,6 @@ namespace WeCook.WebApi
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddResponseCompression(options =>
@@ -42,6 +41,11 @@ namespace WeCook.WebApi
             });
 
             services.AddAutoMapper(typeof(Startup));
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+
+            });
             services.AddResponseCaching();
             services.AddControllers();
             services.ResolveDependencies();
