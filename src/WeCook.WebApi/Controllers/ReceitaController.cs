@@ -11,13 +11,13 @@ namespace WeCook.WebApi.Controllers
 {
     [Route("api/receita")]
     [ApiController]
-    public class ReceitaController : ControllerBase
+    public class ReceitaController : MainController
     {
         private readonly IReceitaRepository _receitaRepository;
         private readonly IReceitaService _receitaService;
         private readonly IMapper _mapper;
 
-        public ReceitaController(IReceitaRepository receitaRepository, IReceitaService receitaService, IMapper mapper)
+        public ReceitaController(IReceitaRepository receitaRepository, IReceitaService receitaService, IMapper mapper, INotificador notificador) : base (notificador)
         {
             _receitaRepository = receitaRepository;
             _receitaService = receitaService;
@@ -43,13 +43,13 @@ namespace WeCook.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Receita>> Adicionar(ReceitaViewModel receitaViewModel)
+        public async Task<ActionResult<ReceitaViewModel>> Adicionar(ReceitaViewModel receitaViewModel)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             await _receitaService.Adicionar(_mapper.Map<Receita>(receitaViewModel));
 
-            return Ok("Adicionado com sucesso!");
+            return CustomResponse("Adicionado com sucesso!");
         }
 
         [HttpPut]
@@ -58,14 +58,15 @@ namespace WeCook.WebApi.Controllers
         {
             if (id != receitaViewModel.Id)
             {
-                return Ok(receitaViewModel);
+                NotificarErro("O id informado não é o mesmo que foi passado na query");
+                return CustomResponse(receitaViewModel);
             }
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             await _receitaService.Atualizar(_mapper.Map<Receita>(receitaViewModel));
 
-            return Ok("Alterado com sucesso!");
+            return CustomResponse("Alterado com sucesso!");
         }
 
         [HttpDelete]
@@ -78,7 +79,7 @@ namespace WeCook.WebApi.Controllers
 
             await _receitaService.Remover(id);
 
-            return Ok("Deletado com sucesso!");
+            return CustomResponse("Deletado com sucesso!");
         }
 
         private async Task<ReceitaViewModel> ObterReceita(Guid id)

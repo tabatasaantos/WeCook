@@ -32,13 +32,13 @@ namespace WeCook.Domain.Services
 
         public async Task<bool> Atualizar(Categoria categoria)
         {
-            if (!ExecutarValidacao(new CategoriaValidation(), categoria)) return false;
+            //if (!ExecutarValidacao(new CategoriaValidation(), categoria)) return false;
 
-            if (_categoriaRepository.Buscar(c => c.Nome == categoria.Nome && c.Id != categoria.Id).Result.Any())
-            {
-                Notificar("Já existe uma categoria com este nome infomado.");
-                return false;
-            }
+            //if (_categoriaRepository.Buscar(c => c.Nome == categoria.Nome && c.Id != categoria.Id).Result.Any())
+            //{
+            //    Notificar("Já existe uma categoria com este nome infomado.");
+            //    return false;
+            //}
 
             await _categoriaRepository.Atualizar(categoria);
             return true;
@@ -48,7 +48,7 @@ namespace WeCook.Domain.Services
         {
             if (_categoriaRepository.ObterReceitaCategoria(id).Result.Receitas.Any())
             {
-                Notificar("A categoria possui receitas cadastrados!");
+                Notificar("A categoria possui receitas cadastradas!");
                 return false;
             }
 

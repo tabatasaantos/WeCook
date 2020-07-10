@@ -5,8 +5,8 @@ namespace WeCook.Domain.Interfaces
 {
     public interface IReceitaService : IDisposable
     {
-        Task Adicionar(Receita receita);
-        Task Atualizar(Receita receita);
-        Task Remover(Guid id);
+        Task<bool> Adicionar(Receita receita);
+        Task<bool> Atualizar(Receita receita);
+        Task<bool> Remover(Guid id);
     }
 }

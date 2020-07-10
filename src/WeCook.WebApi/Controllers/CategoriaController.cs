@@ -45,9 +45,7 @@ namespace WeCook.WebApi.Controllers
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            Categoria teste = _mapper.Map<Categoria>(categoriaViewModel);
-
-            await _categoriaService.Adicionar(teste);
+            await _categoriaService.Adicionar(_mapper.Map<Categoria>(categoriaViewModel));
 
             return CustomResponse("Cadastrado com sucesso!");
         }
@@ -58,7 +56,7 @@ namespace WeCook.WebApi.Controllers
             if (id != categoriaViewModel.Id)
             {
                 NotificarErro("O id informado não é o mesmo que foi passado na query");
-                return Ok(categoriaViewModel);
+                return CustomResponse(categoriaViewModel);
             }
 
             if (!ModelState.IsValid) return CustomResponse(ModelState);
