@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using DevIO.Api.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WeCook.Domain;
 using WeCook.Domain.Interfaces;
@@ -9,8 +11,8 @@ using WeCook.WebApi.ViewModels;
 
 namespace WeCook.WebApi.Controllers
 {
+    [Authorize]
     [Route("api/receita")]
-    [ApiController]
     public class ReceitaController : MainController
     {
         private readonly IReceitaRepository _receitaRepository;
@@ -42,6 +44,7 @@ namespace WeCook.WebApi.Controllers
             return receita;
         }
 
+        [ClaimsAuthorize("Categoria", "Adicionar")]
         [HttpPost]
         public async Task<ActionResult<ReceitaViewModel>> Adicionar(ReceitaViewModel receitaViewModel)
         {
@@ -52,6 +55,7 @@ namespace WeCook.WebApi.Controllers
             return CustomResponse("Adicionado com sucesso!");
         }
 
+        [ClaimsAuthorize("Categoria", "Atualizar")]
         [HttpPut]
         [Route("{id:guid})")]
         public async Task<ActionResult<Receita>> Alterar(Guid id, ReceitaViewModel receitaViewModel)
@@ -69,6 +73,7 @@ namespace WeCook.WebApi.Controllers
             return CustomResponse("Alterado com sucesso!");
         }
 
+        [ClaimsAuthorize("Categoria", "Excluir")]
         [HttpDelete]
         [Route("{id:guid})")]
         public async Task<ActionResult<ReceitaViewModel>> Excluir(Guid id)

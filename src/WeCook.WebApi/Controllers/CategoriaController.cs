@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using DevIO.Api.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WeCook.Domain;
 using WeCook.Domain.Interfaces;
@@ -9,8 +11,8 @@ using WeCook.WebApi.ViewModels;
 
 namespace WeCook.WebApi.Controllers
 {
+    [Authorize]
     [Route("api/categoria")]
-    [ApiController]
     public class CategoriaController : MainController
     {
         private readonly ICategoriaRepository _categoriaRepository;
@@ -40,6 +42,7 @@ namespace WeCook.WebApi.Controllers
             return categoria;
         }
 
+        [ClaimsAuthorize("Categoria", "Adicionar")]
         [HttpPost]
         public async Task<ActionResult<CategoriaViewModel>> Adicionar(CategoriaViewModel categoriaViewModel)
         {
@@ -50,6 +53,7 @@ namespace WeCook.WebApi.Controllers
             return CustomResponse("Cadastrado com sucesso!");
         }
 
+        [ClaimsAuthorize("Categoria", "Atualizar")]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<CategoriaViewModel>> Alterar(Guid id, CategoriaViewModel categoriaViewModel)
         {
@@ -66,8 +70,9 @@ namespace WeCook.WebApi.Controllers
             return CustomResponse("Alterado com sucesso!");
         }
 
+        [ClaimsAuthorize("Categoria", "Excluir")]
         [HttpDelete("{id:guid}")]
-        public async Task<ActionResult<CategoriaViewModel>> Excluir(Guid id)
+        private async Task<ActionResult<CategoriaViewModel>> Excluir(Guid id)
         {
            var categoriaViewModel = await ObterReceitaCategoria(id);
 

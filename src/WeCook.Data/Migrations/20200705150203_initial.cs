@@ -20,19 +20,19 @@ namespace WeCook.Data.Migrations
                     table.PrimaryKey("PK_Categoria", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "varchar(100)", maxLength: 20, nullable: false),
-                    Password = table.Column<string>(type: "varchar(100)", maxLength: 20, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                });
+            //migrationBuilder.CreateTable(
+            //    name: "Users",
+            //    columns: table => new
+            //    {
+            //        Id = table.Column<int>(nullable: false)
+            //            .Annotation("SqlServer:Identity", "1, 1"),
+            //        Username = table.Column<string>(type: "varchar(100)", maxLength: 20, nullable: false),
+            //        Password = table.Column<string>(type: "varchar(100)", maxLength: 20, nullable: false)
+            //    },
+            //    constraints: table =>
+            //    {
+            //        table.PrimaryKey("PK_Users", x => x.Id);
+            //    });
 
             migrationBuilder.CreateTable(
                 name: "Receita",
@@ -69,8 +69,8 @@ namespace WeCook.Data.Migrations
             migrationBuilder.DropTable(
                 name: "Receita");
 
-            migrationBuilder.DropTable(
-                name: "Users");
+            //migrationBuilder.DropTable(
+            //    name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Categoria");
